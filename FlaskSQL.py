@@ -1,18 +1,19 @@
 from flask import Flask,render_template, request, jsonify
 from flask_mysqldb import MySQL
 
+import os
 
 app = Flask(__name__)
 
-app.config['MYSQL_HOST'] ='mysql-credit-scoring-ipssi.alwaysdata.net'
-app.config['MYSQL_USER'] ='303869'
-app.config['MYSQL_PASSWORD'] ='7852xawJBTjDhTc'
-app.config['MYSQL_DB'] ='credit-scoring-ipssi_home-credit'
- 
+app.config['MYSQL_HOST'] = os.getenv('host')
+app.config['MYSQL_USER'] = os.getenv('user')
+app.config['MYSQL_PASSWORD'] = os.getenv('pw')
+app.config['MYSQL_DB'] = os.getenv('db')
+
 mysql = MySQL(app)
 
 if mysql:
-   print("Connection réussie!")
+    print("Connection réussie!")
 else:
     print ("Connection échouée")
     
