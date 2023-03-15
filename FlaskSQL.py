@@ -37,8 +37,32 @@ def index():
     resultat_trie = {}
     for key, value in sorted(resultat.items()):
         resultat_trie[key] = value
-
     return jsonify({'resultat': resultat_trie})
+
+@app.route("/client/<id>")
+def getClient(id):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM MainTable WHERE SK_ID_CURR = %s", (id,))
+    results = cursor.fetchall()
+    noms_colonnes = [col[0] for col in cursor.description]
+    cursor.close()
+    if len(results) == 0:
+        return f"Aucun client trouvé avec l'ID {id}.", 404
+    else:
+        # Création du dictionnaire des résultats
+        resultat = {}
+        for i, row in enumerate(results):
+            # Création du dictionnaire pour chaque ligne de la table
+            ligne = {}
+            for j, col in enumerate(row):
+                ligne[noms_colonnes[j]] = col
+            resultat[str(i)] = ligne
+
+        # Tri des éléments du dictionnaire par ordre croissant
+        resultat_trie = {}
+        for key, value in sorted(resultat.items()):
+            resultat_trie[key] = value
+        return jsonify({'resultat': resultat_trie})
 
 if __name__ == '__main__':
     app.debug = True
