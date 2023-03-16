@@ -1,4 +1,4 @@
-export type Client = {
+export type IClient = {
   AMT_ANNUITY: number;
   AMT_CREDIT: number;
   AMT_GOODS_PRICE: number;
