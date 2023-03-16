@@ -1,39 +1,38 @@
-import * as React from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-interface State {
-  value: string;
-}
+export default function Searchbar() {
+  const navigate = useNavigate();
 
-class Searchbar extends React.Component<{}, State> {
-  constructor(props: any) {
-    super(props);
-    this.state = { value: "" };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-  handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({ value: event.target.value }); // get the value from input when it change
-  }
-  handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const [value, setValue] = useState("");
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  }
 
-  render() {
-    return (
-      <div>
-        <form onSubmit={this.handleSubmit}>
-          <input
-            type="number"
-            min={100001}
-            value={this.state.value}
-            placeholder="Search by id"
-            onChange={this.handleChange}
-          />
-          <a href={`/clients/${this.state.value}`}>🔎</a>
-        </form>
-      </div>
-    );
-  }
+    if (!value || value.length !== 6) return;
+
+    navigate(`/clients/${value}`);
+
+    setValue("");
+  };
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="number"
+          min={100001}
+          max={456255}
+          value={value}
+          placeholder="Search by id"
+          onChange={handleChange}
+        />
+        <button type="submit">🔎</button>
+      </form>
+    </div>
+  );
 }
-
-export default Searchbar;
