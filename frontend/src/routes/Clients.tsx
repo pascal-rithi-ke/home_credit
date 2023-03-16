@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getClient } from "../utils/client";
 import Searchbar from "../components/Searchbar";
 import { useQuery } from "@tanstack/react-query";
+import { Area } from '@ant-design/plots';
+import ReactDOM from 'react-dom';
 
 export default function Clients() {
   const { id } = useParams();
@@ -29,9 +31,44 @@ export default function Clients() {
         )}
 
         <p>{client?.AMT_INCOME_TOTAL}</p>
+        <DemoArea/>
       </div>
 
       <Link to="/">Retour à l'accueil</Link>
     </div>
   );
 }
+
+const DemoArea = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    asyncFetch();
+  }, []);
+
+  const asyncFetch = () => {
+    fetch('http://localhost:5000')
+      .then((response) => response.json())
+      .then((json) => {
+      setData(json);
+      console.log(json);
+  })
+      .catch((error) => {
+        console.log('fetch data failed', error);
+      });
+  };
+  const config = {
+    data,
+    xField: 'DAYS_CREDIT',
+    yField: 'AMT_CREDIT_SUM',
+    xAxis: {
+      range: [0, 1],
+    },
+  };
+
+  return <Area {...config} />;
+  
+};
+
+
+  
