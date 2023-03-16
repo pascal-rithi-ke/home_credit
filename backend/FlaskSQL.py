@@ -21,7 +21,7 @@ if mysql:
     print("Connection réussie!")
 else:
     print ("Connection échouée")
-    
+
 @app.route("/")
 def index():
     # Création curseur
@@ -30,25 +30,19 @@ def index():
     results = cursor.fetchall()
     noms_colonnes = [col[0] for col in cursor.description]
 
-    # Création du dictionnaire des résultats
-    resultat = {}
+    resultat = []
     for i, row in enumerate(results):
         # Création du dictionnaire pour chaque ligne de la table
         ligne = {}
         for j, col in enumerate(row):
             ligne[noms_colonnes[j]] = col
-        resultat[str(i)] = ligne
-
-    # Tri des éléments du dictionnaire par ordre croissant
-    resultat_trie = {}
-    for key, value in sorted(resultat.items()):
-        resultat_trie[key] = value
-    return jsonify({'resultat': resultat_trie})
+            resultat.append(ligne)
+    return jsonify(resultat)
 
 @app.route("/client/<id>")
 def getClient(id):
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM MainTable WHERE SK_ID_CURR = %s", (id,))
+    cursor.execute("SELECT AMT_CREDIT_SUM as credit ,(DAYS_CREDIT/-365) as jour FROM `MainTable` JOIN bureau on MainTable.SK_ID_CURR = bureau.SK_ID_CURR WHERE MainTable.SK_ID_CURR = %s", (id,))
     results = cursor.fetchall()
     noms_colonnes = [col[0] for col in cursor.description]
     cursor.close()
@@ -56,19 +50,14 @@ def getClient(id):
         return f"Aucun client trouvé avec l'ID {id}.", 404
     else:
         # Création du dictionnaire des résultats
-        resultat = {}
-        for i, row in enumerate(results):
-            # Création du dictionnaire pour chaque ligne de la table
-            ligne = {}
-            for j, col in enumerate(row):
-                ligne[noms_colonnes[j]] = col
-            resultat[str(i)] = ligne
-
-        # Tri des éléments du dictionnaire par ordre croissant
-        resultat_trie = {}
-        for key, value in sorted(resultat.items()):
-            resultat_trie[key] = value
-        return jsonify({'resultat': resultat_trie})
+        resultat = []
+    for i, row in enumerate(results):
+        # Création du dictionnaire pour chaque ligne de la table
+        ligne = {}
+        for j, col in enumerate(row):
+            ligne[noms_colonnes[j]] = col
+            resultat.append(ligne)
+    return jsonify(resultat)
 
 if __name__ == '__main__':
     app.debug = True

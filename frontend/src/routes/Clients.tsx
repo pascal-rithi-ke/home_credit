@@ -42,16 +42,18 @@ export default function Clients() {
 const DemoArea = () => {
   const [data, setData] = useState([]);
 
+  const {id} = useParams();
+
   useEffect(() => {
     asyncFetch();
-  }, []);
+  }, [id]);
 
   const asyncFetch = () => {
-    fetch('http://localhost:5000')
+    fetch('http://localhost:5000/client/'+id)
       .then((response) => response.json())
       .then((json) => {
       setData(json);
-      console.log(json);
+      console.dir(json);
   })
       .catch((error) => {
         console.log('fetch data failed', error);
@@ -59,8 +61,8 @@ const DemoArea = () => {
   };
   const config = {
     data,
-    xField: 'DAYS_CREDIT',
-    yField: 'AMT_CREDIT_SUM',
+    xField: 'credit',
+    yField: 'jour',
     xAxis: {
       range: [0, 1],
     },
