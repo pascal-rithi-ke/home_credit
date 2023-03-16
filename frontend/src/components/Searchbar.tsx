@@ -29,6 +29,7 @@ export default function Searchbar() {
           max={456255}
           value={value}
           placeholder="Search by id"
+          required={true}
           onChange={handleChange}
         />
         <button type="submit">🔎</button>
