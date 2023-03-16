@@ -141,7 +141,7 @@ export type IClient = {
   REG_REGION_NOT_LIVE_REGION: number;
   REG_REGION_NOT_WORK_REGION: number;
   SK_ID_CURR: number;
-  TARGET?: number;
+  TARGET?: 0 | 1;
   TOTALAREA_MODE: number;
   WALLSMATERIAL_MODE: string;
   WEEKDAY_APPR_PROCESS_START:
