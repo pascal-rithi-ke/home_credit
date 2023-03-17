@@ -2,7 +2,11 @@ from flask import Flask,render_template, request, jsonify
 from flask_mysqldb import MySQL
 from flask_cors import CORS
 
+import numpy as np
+
 import os
+
+import pandas as pd
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -58,6 +62,15 @@ def getClient(id):
             ligne[noms_colonnes[j]] = col
             resultat.append(ligne)
     return jsonify(resultat)
+
+@app.route("/csv")
+def csv():
+    app_train = pd.read_csv("../raw_data/application_train.csv")
+    age_data = app_train[['TARGET', 'DAYS_BIRTH']]
+    age_data['YEARS_BIRTH'] = age_data['DAYS_BIRTH'] / 365
+    # Bin the age data
+    age_data['YEARS_BINNED'] = pd.cut(age_data['YEARS_BIRTH'], bins = np.linspace(20, 70, num = 11))
+    return age_data.iloc[0].to_json()
 
 if __name__ == '__main__':
     app.debug = True

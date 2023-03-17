@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { getClient } from "../utils/client";
 import Searchbar from "../components/Searchbar";
 import { useQuery } from "@tanstack/react-query";
-import { Area } from '@ant-design/plots';
+import { Area, Pie } from '@ant-design/plots';
 import ReactDOM from 'react-dom';
 
 export default function Clients() {
@@ -31,7 +31,10 @@ export default function Clients() {
         )}
 
         <p>{client?.AMT_INCOME_TOTAL}</p>
-        <DemoArea/>
+        <div style={{display:'flex'}}>
+          <DemoArea/>
+          <DemoPie/>
+        </div>
       </div>
 
       <Link to="/">Retour à l'accueil</Link>
@@ -53,7 +56,7 @@ const DemoArea = () => {
       .then((response) => response.json())
       .then((json) => {
       setData(json);
-      console.dir(json);
+      //console.dir(json);
   })
       .catch((error) => {
         console.log('fetch data failed', error);
@@ -61,8 +64,8 @@ const DemoArea = () => {
   };
   const config = {
     data,
-    xField: 'credit',
-    yField: 'jour',
+    xField: 'jour',
+    yField: 'credit',
     xAxis: {
       range: [0, 1],
     },
@@ -70,6 +73,65 @@ const DemoArea = () => {
 
   return <Area {...config} />;
   
+};
+
+const DemoPie = () => {
+  const [data, setData] = useState([]);
+
+  const {id} = useParams();
+
+  useEffect(() => {
+    asyncFetch();
+  }, [id]);
+
+  const asyncFetch = () => {
+    fetch('http://localhost:5000/client/'+id)
+      .then((response) => response.json())
+      .then((json) => {
+      setData(json);
+      console.dir(json);
+  })
+      .catch((error) => {
+        console.log('fetch data failed', error);
+      });
+  };
+  
+  const config = {
+    appendPadding: 10,
+    data,
+    angleField: 'credit',
+    colorField: 'jour',
+    radius: 1,
+    innerRadius: 0.6,
+    label: {
+      type: 'inner',
+      offset: '-50%',
+      content: 'credit',
+      style: {
+        textAlign: 'center',
+        fontSize: 14,
+      },
+    },
+    interactions: [
+      {
+        type: 'element-selected',
+      },
+      {
+        type: 'element-active',
+      },
+    ],
+    statistic: {
+      content: {
+        style: {
+          whiteSpace: 'pre-wrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        },
+        content: 'Credit\n',
+      },
+    },
+  };
+  return <Pie {...config} />;
 };
 
 
